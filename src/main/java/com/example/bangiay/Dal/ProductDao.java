@@ -45,71 +45,7 @@ public class ProductDao extends DBContext {
         return list;
     }
 
-    public List<Product> getAllProductDetail() {
-        List<Product> list = new ArrayList<>();
-        String sql = "SELECT p.id AS product_id, p.name AS product_name, p.image AS product_image, p.price AS product_price, p.description AS product_description, p.stock AS product_stock, "
-                + "b.id AS brand_id, b.name AS brand_name, "
-                + "c.id AS category_id, c.name AS category_name "
-                + "FROM Product p "
-                + "JOIN Brand b ON p.bid = b.id "
-                + "JOIN Category c ON p.cid = c.id";
-        try {
-            PreparedStatement st = connection.prepareStatement(sql);
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                Brand brand = new Brand(rs.getInt("brand_id"), rs.getString("brand_name"));
-                Category category = new Category(rs.getInt("category_id"), rs.getString("category_name"));
-                Product p = new Product();
-                p.setId(rs.getInt("product_id"));
-                p.setName(rs.getString("product_name"));
-                p.setImage(rs.getString("product_image"));
-                p.setPrice(rs.getInt("product_price"));
-                p.setDescription(rs.getString("product_description"));
-                p.setStock(rs.getInt("product_stock"));
-                p.setBrand(brand);
-                p.setCategory(category);
-                list.add(p);
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return list;
-    }
 
-    public void addProduct(Product product) {
-        String sql = "INSERT INTO Product (cid, bid, name, image, price, description, stock) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement st = connection.prepareStatement(sql);
-            st.setInt(1, product.getCategory().getId());
-            st.setInt(2, product.getBrand().getId());
-            st.setString(3, product.getName());
-            st.setString(4, product.getImage());
-            st.setDouble(5, product.getPrice()); // Use setDouble for the 'real' type in SQL
-            st.setString(6, product.getDescription());
-            st.setInt(7, product.getStock());
-            st.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-    }
-
-    public void editProduct(Product product) {
-        String sql = "UPDATE Product SET name = ?, image = ?, price = ?, description = ?, stock = ?, bid = ?, cid = ? WHERE id = ?";
-        try {
-            PreparedStatement st = connection.prepareStatement(sql);
-            st.setString(1, product.getName());
-            st.setString(2, product.getImage());
-            st.setInt(3, product.getPrice());
-            st.setString(4, product.getDescription());
-            st.setInt(5, product.getStock());
-            st.setInt(6, product.getBrand().getId());
-            st.setInt(7, product.getCategory().getId());
-            st.setInt(8, product.getId());
-            st.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-    }
 
     // Delete a product by id
     public int hideProduct(int productId) {
@@ -218,28 +154,10 @@ public class ProductDao extends DBContext {
     }
 
     // Utility method to fetch a category by its ID
-    private Category getCategoryById(int categoryId) throws SQLException {
-        String sql = "SELECT * FROM Category WHERE cid = ?";
-        PreparedStatement st = connection.prepareStatement(sql);
-        st.setInt(1, categoryId);
-        ResultSet rs = st.executeQuery();
-        if (rs.next()) {
-            return new Category(rs.getInt("cid"), rs.getString("name"));
-        }
-        return null;
-    }
+
 
 // Utility method to fetch a brand by its ID
-    private Brand getBrandById(int brandId) throws SQLException {
-        String sql = "SELECT * FROM Brand WHERE bid = ?";
-        PreparedStatement st = connection.prepareStatement(sql);
-        st.setInt(1, brandId);
-        ResultSet rs = st.executeQuery();
-        if (rs.next()) {
-            return new Brand(rs.getInt("bid"), rs.getString("name"));
-        }
-        return null;
-    }
+
 
     public List<Product> searchByNameProduct(String keyword) {
         List<Product> searchResult = new ArrayList<>();
@@ -655,70 +573,7 @@ public class ProductDao extends DBContext {
         return productVariant;
     }
 
-    public List<Product> getProductVariantById(int id) {
-        List<Product> products = new ArrayList<>();
-        try {
-            String sql = "SELECT p.id, p.name, p.image, p.price, p.description, p.stock,"
-                    + "b.id AS brand_id, b.name AS brand_name, "
-                    + "c.id AS category_id, c.name AS category_name, "
-                    + "pv.id AS productVariantId "
-                    + "FROM Product p "
-                    + "JOIN Brand b ON p.bid = b.id "
-                    + "JOIN Category c ON p.cid = c.id "
-                    + "JOIN ProductVariant pv ON p.id = pv.pId "
-                    + "WHERE p.id = ?";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-            ResultSet rs = statement.executeQuery();
-
-            while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getInt("id"));
-                product.setName(rs.getString("name"));
-                product.setImage(rs.getString("image"));
-                String priceStr = rs.getString("price");
-                if (priceStr != null) {
-                    priceStr = priceStr.replace(".", ""); // Loại bỏ dấu chấm
-                    try {
-                        int price = Integer.parseInt(priceStr);
-                        product.setPrice(price);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Lỗi chuyển đổi giá trị price: " + e.getMessage());
-                        product.setPrice(0); // Hoặc giá trị mặc định khác nếu cần
-                    }
-                } else {
-                    product.setPrice(0); // Hoặc giá trị mặc định khác nếu cần
-                }
-
-                product.setDescription(rs.getString("description"));
-                product.setStock(rs.getInt("stock"));
-
-                // Thiết lập Category
-                Category category = new Category();
-                category.setId(rs.getInt("category_id"));
-                category.setName(rs.getString("category_name"));
-                product.setCategory(category);
-
-                // Thiết lập Brand
-                Brand brand = new Brand();
-                brand.setId(rs.getInt("brand_id"));
-                brand.setName(rs.getString("brand_name"));
-                product.setBrand(brand);
-
-                // Thiết lập thông tin ProductVariant
-                ProductVariant productVariant = new ProductVariant();
-                productVariant.setId(rs.getInt("productVariantId"));
-                product.setProductVariant(productVariant);
-
-                // Thêm sản phẩm vào danh sách
-                products.add(product);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return products;
-    }
 
     public void updateProductQuantity(int productVariantId, int quantity) {
         String sql = "UPDATE ProductVariant SET stock = stock - ? WHERE id = ?";
@@ -731,18 +586,7 @@ public class ProductDao extends DBContext {
             System.out.println(e);
         }
     }
-    public int getTotalProduct(){
-    int count = 0;
-    String sql = "SELECT COUNT(*) FROM Product";
-    try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-        if (rs.next()) {
-            count = rs.getInt(1);
-        }
-    } catch (SQLException e) {
-        System.out.println("SQL Error: " + e.getMessage());
-    }
-    return count;
-}
+
 
     public static void main(String[] args) {
      ProductDao productDAO = new ProductDao();

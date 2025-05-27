@@ -5,17 +5,11 @@
 package com.example.bangiay.Dal;
 
 import com.example.bangiay.Model.User;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Date;
 
-/**
- *
- * @author ADMIN
- */
 public class AccountDao extends DBContext {
 
     public User GetAccount(String gmail, String pass) {
@@ -44,6 +38,31 @@ public class AccountDao extends DBContext {
         }
         return null;
     }
+//    public User GetAccount(String gmail, String pass) {
+//
+//        String sql = "select * from [dbo].[Users] where email='" + gmail + "' and pass='" + pass + "'";
+//        try {
+//
+//            Statement st = connection.createStatement();
+//            ResultSet rs = st.executeQuery(sql);
+//            while (rs.next()) {
+//                User a = new User();
+//                a.setId(rs.getInt("id"));
+//                a.setEmail(rs.getString("email"));
+//                a.setPass(rs.getString("pass"));
+//                a.setFullName(rs.getString("fullName"));
+//                a.setGender(rs.getString("gender"));
+//                a.setDob(rs.getDate("dob"));
+//                a.setPhone(rs.getString("phone"));
+//                a.setAddress(rs.getString("address"));
+//                a.setRoleId(rs.getInt("roleId"));
+//                return a;
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("SQL Error (Potential SQL Injection demonstrated): " + e.getMessage());
+//        }
+//        return null;
+//    }
 
     public User checkAccountByEmail(String email) {
         String sql = "SELECT * FROM [dbo].[Users] WHERE email = ?";
@@ -69,6 +88,33 @@ public class AccountDao extends DBContext {
         }
         return null;
     }
+
+//    public User checkAccountByEmail(String email) {
+//
+//        String sql = "SELECT * FROM [dbo].[Users] WHERE email = '" + email + "'"; // Nối chuỗi trực tiếp
+//        try {
+//
+//            Statement st = connection.createStatement();
+//            ResultSet rs = st.executeQuery(sql);
+//            if (rs.next()) {
+//                User user = new User();
+//                user.setId(rs.getInt("id"));
+//                user.setEmail(rs.getString("email"));
+//                user.setPass(rs.getString("pass"));
+//                user.setFullName(rs.getString("fullName"));
+//                user.setPhone(rs.getString("phone"));
+//                user.setAddress(rs.getString("address"));
+//                user.setRoleId(rs.getInt("roleId"));
+//                user.setGender(rs.getString("gender"));
+//                user.setDob(rs.getDate("dob"));
+//                return user;
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("SQL Error (Potential SQL Injection demonstrated): " + e.getMessage());
+//            // Log the exception or handle it appropriately
+//        }
+//        return null;
+//    }
 
     public void UpdatePassword(String email, String pass) {
         String sql = "UPDATE [dbo].[Users]\n"

@@ -77,6 +77,7 @@ public class OrderCOD extends HttpServlet {
         request.getRequestDispatcher("manageOrderCOD.jsp").forward(request, response);
     }
 
+
     /** 
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request

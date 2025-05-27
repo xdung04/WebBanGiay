@@ -8,6 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags must come first in the head; any other head content must come after these tags -->
+<%--        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://fonts.googleapis.com; img-src 'self' data:;">--%>
 
         <title>Hola Tech</title>
 
@@ -199,7 +200,9 @@
                         <div class="col-md-6">
                             <div class="header-search">
                                 <form action="search" method="POST">
+<%--                                    <input value="<c:out value="${key}"/>" type="search" name="keyword" class="input" placeholder="Bạn cần tìm gì?">--%>
                                     <input value="${key}" type="search" name="keyword" class="input" placeholder="Bạn cần tìm gì?">
+
                                     <button class="search-btn">Search</button>
                                 </form>
                             </div>
