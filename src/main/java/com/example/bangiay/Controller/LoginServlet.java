@@ -116,10 +116,69 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
+
+
     /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
+     @Override
+     protected void doPost(HttpServletRequest request, HttpServletResponse response)
+     throws ServletException, IOException {
+     String email = request.getParameter("email");
+     String password = request.getParameter("password");
+
+     AccountDao ad = new AccountDao();
+
+     HttpSession session = request.getSession();
+
+     // Lấy số lần đăng nhập sai từ session
+     Integer failCount = (Integer) session.getAttribute("failCount");
+     if (failCount == null) failCount = 0;
+
+     // Nếu đã sai 5 lần thì chặn tiếp tục đăng nhập
+     if (failCount >= 5) {
+     request.setAttribute("mess", "Bạn đã nhập sai quá nhiều lần. Vui lòng thử lại sau.");
+     request.getRequestDispatcher("login.jsp").forward(request, response);
+     return;
+     }
+
+     // Kiểm tra tài khoản
+     User u1 = ad.checkAccountByEmail(email);
+
+     if (u1 == null) {
+     // Sai email
+     session.setAttribute("failCount", ++failCount);
+     request.setAttribute("mess", "Email hoặc mật khẩu không đúng.");
+     request.getRequestDispatcher("login.jsp").forward(request, response);
+     } else {
+     User u = ad.GetAccount(email, password);
+
+     if (u == null || !u.getPass().equals(password)) {
+     // Sai mật khẩu
+     session.setAttribute("failCount", ++failCount);
+     request.setAttribute("mess", "Email hoặc mật khẩu không đúng.");
+     request.getRequestDispatcher("login.jsp").forward(request, response);
+     } else {
+     // Đăng nhập thành công
+     session.setAttribute("acc", u);
+     session.removeAttribute("failCount"); // Xóa số lần sai
+
+     switch (u.getRoleId()) {
+     case 1:
+     response.sendRedirect("homeadmin");
+     break;
+     case 3:
+     response.sendRedirect("homestaff");
+     break;
+     case 4:
+     request.setAttribute("mess", "Tài khoản của bạn đã bị khóa do vi phạm quy định của Web");
+     request.getRequestDispatcher("login.jsp").forward(request, response);
+     break;
+     default:
+     response.sendRedirect("home");
+     break;
+     }
+     }
+     }
+     }
      */
     @Override
     public String getServletInfo() {
