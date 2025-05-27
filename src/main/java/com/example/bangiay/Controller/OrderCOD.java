@@ -58,7 +58,7 @@ public class OrderCOD extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         List<Order> codOrders = new ArrayList<>();
 
         OrderDao orderDAO = new OrderDao();
@@ -67,15 +67,16 @@ public class OrderCOD extends HttpServlet {
 
         List<Order> allOrders = orderDAO.getAllOrders();
         for (Order order : allOrders) {
-            int paymentType = paymentDao.getPaymentTypeByOrderId(order.getId());
-            if (paymentType == 1) {
+            Integer paymentType = paymentDao.getPaymentTypeByOrderId(order.getId());
+            if (paymentType != null && paymentType == 1) {
                 codOrders.add(order);
             }
         }
         request.setAttribute("statusList", statusList);
         request.setAttribute("codOrders", codOrders);
         request.getRequestDispatcher("manageOrderCOD.jsp").forward(request, response);
-    } 
+    }
+
 
     /** 
      * Handles the HTTP <code>POST</code> method.

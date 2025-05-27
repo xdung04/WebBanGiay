@@ -91,7 +91,6 @@ public class UpdateAccount extends HttpServlet {
         HttpSession session = request.getSession();
         String idStr = request.getParameter("id");
 
-        // Bảo toàn id trong trường hợp lỗi
         String redirectURL = "updateaccount?id=" + idStr;
 
         int id;

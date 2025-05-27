@@ -87,7 +87,7 @@
                                     <form action="login" method="post">
                                         <div data-mdb-input-init class="form-outline form-white mb-4">
                                             <label class="form-label" for="typeEmailX">*Email</label>
-                                            <input name="email" type="email" id="typeEmailX" class="form-control form-control-lg" required/>
+                                            <input name="email" type="text" id="typeEmailX" class="form-control form-control-lg" required/>
                                         </div>
 
                                         <div data-mdb-input-init class="form-outline form-white mb-4">

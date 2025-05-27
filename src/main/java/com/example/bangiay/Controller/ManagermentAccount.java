@@ -60,7 +60,7 @@ public class ManagermentAccount extends HttpServlet {
         List<User> list = ad.getAllAccount();
         request.setAttribute("data", list);
         request.getRequestDispatcher("accountManagerment.jsp").forward(request, response);
-    } 
+    }
 
     /** 
      * Handles the HTTP <code>POST</code> method.
